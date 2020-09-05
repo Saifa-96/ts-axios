@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Document</title>
+</head>
+
+<body>
+  <script>
+    params = {
+      pageNo: 1,
+      pageSize: 20,
+      platform: 'adkhfkajsdhfsd',
+      searchParam: '',
+      channelClass: '',
+      data: {
+        linkInput: '',
+        channelBagUrl: '123123',
+        a: {
+          b: '',
+          c: '123'
+        }
+      }
+    }
+
+    const isPlainObject = obj => Object.prototype.toString.call(obj) === '[object Object]'
+
+    const filterParams = params => {
+      if (!isPlainObject(params)) return params
+      return Object.keys(params).reduce((obj, key) => {
+        const value = params[key]
+        if (value !== '') {
+          obj[key] = isPlainObject(value) ? filterParams(value) : value
+        }
+        return obj
+      }, {})
+    }
+
+    console.log(filterParams(params))
+  </script>
+</body>
+
+</html>

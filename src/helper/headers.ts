@@ -1,4 +1,6 @@
-import { isPlainObject } from './utils'
+import { isPlainObject, deepMerge } from './utils'
+import { Method } from '../types'
+import { head } from 'shelljs'
 
 function normalizeHeaderName(headers: any, normalizeName: string): void {
   if (!headers) return
@@ -25,11 +27,12 @@ export function parseHeaders(headers: string): Object {
   const parsed = Object.create(null)
   if (!headers) return parsed
   headers.split('\r\n').forEach(line => {
-    let [key, val] = line.split(':')
+    let [key, ...vals] = line.split(':')
     key = key.trim().toLowerCase()
     if (!key) {
       return
     }
+    let val = vals.join(':')
     if (val) {
       val = val.trim()
     }
@@ -37,4 +40,33 @@ export function parseHeaders(headers: string): Object {
   })
 
   return parsed
+}
+
+// export function parseHeaders(headers: string): any {
+//   let parsed = Object.create(null)
+//   if (!headers) {
+//     return parsed
+//   }
+
+//   headers.split('\r\n').forEach(line => {
+//     let [key, ...vals] = line.split(':')
+//     key = key.trim().toLowerCase()
+//     if (!key) {
+//       return
+//     }
+//     const val = vals.join(':').trim()
+//     parsed[key] = val
+//   })
+
+//   return parsed
+// }
+
+export function flattenHeaders(headers: any, method: Method): any {
+  if (!headers) return headers
+  headers = deepMerge(headers.common, headers[method], headers)
+  const methodsToDelete = ['post', 'put', 'patch', 'get', 'delete', 'head', 'options', 'common']
+  methodsToDelete.forEach(methodName => {
+    delete headers[methodName]
+  })
+  return headers
 }

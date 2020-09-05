@@ -6,6 +6,7 @@ const source = CancelToken.source()
 axios.get('/cancel/get', {
   cancelToken: source.token
 }).catch(function(e) {
+  console.log(e)
   if (axios.isCancel(e)) {
     console.log('Request canceled', e.message)
   }
